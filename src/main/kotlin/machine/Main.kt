@@ -1,14 +1,23 @@
 package machine
 
 fun main(args: Array<String>) {
-    println("Write how many ml of water the coffee machine has:")
-    val mlOfWater = readln().toInt()
-    println("Write how many ml of milk the coffee machine has:")
-    val mlOfMilk = readln().toInt()
-    println("Write how many grams of coffee beans the coffee machine has:")
-    val gramsOfCoffeeBeans = readln().toInt()
-    println("Write how many cups of coffee you will need:")
-    val neededCoffeeCups = readln().toInt()
-    val coffeeMachine = CoffeeMachine(mlOfWater, mlOfMilk, gramsOfCoffeeBeans)
-    coffeeMachine.getResponse(neededCoffeeCups)
+    val coffeeMachine = CoffeeMachine(
+        mlOfWater = 400,
+        mlOfMilk = 540,
+        gramsOfCoffeeBeans = 120,
+        disposableCups = 9,
+        money = 550
+    )
+
+    coffeeMachine.printState()
+
+    println("Write action (buy, fill, take): ")
+
+    when (readln()) {
+        "buy" -> coffeeMachine.buy()
+        "fill" -> coffeeMachine.fill()
+        "take" -> coffeeMachine.takeMoney()
+    }
+
+    coffeeMachine.printState()
 }
