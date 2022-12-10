@@ -6,11 +6,36 @@ private const val MILLILITERS_OF_MILK_FOR_A_COFFEE_CUP = 50
 
 private const val GRAMS_OF_COFFEE_BEANS_FOR_A_COFFEE_CUP = 15
 
+private const val WATER = "water"
+
+private const val MILK = "milk"
+
+private const val COFFEE_BEANS = "coffee beans"
+
+private const val DISPOSABLE_CUPS = "disposable cups"
+
 private const val ESPRESSO = 1
 
 private const val LATTE = 2
 
 private const val CAPPUCCINO = 3
+
+private const val ESPRESSO_WATER_NEED = 250
+
+private const val ESPRESSO_COFFEE_BEANS_NEED = 16
+
+private const val LATTE_WATER_NEED = 350
+
+private const val LATTE_MILK_NEED = 75
+
+private const val LATTE_COFFEE_BEANS_NEED = 20
+
+private const val CAPPUCCINO_WATER_NEED = 200
+
+private const val CAPPUCCINO_MILK_NEED = 100
+
+private const val CAPPUCCINO_COFFEE_BEANS_NEED = 12
+
 
 class CoffeeMachine(
     private var mlOfWater: Int,
@@ -21,13 +46,11 @@ class CoffeeMachine(
 ) {
 
     fun getResponse(neededCoffeeCups: Int) {
-        val maximumCups = listOf<Int>(
+        val maximumCups = listOf(
             mlOfWater / MILLILITERS_OF_WATER_FOR_A_COFFEE_CUP,
             mlOfMilk / MILLILITERS_OF_MILK_FOR_A_COFFEE_CUP,
             gramsOfCoffeeBeans / GRAMS_OF_COFFEE_BEANS_FOR_A_COFFEE_CUP
-        ).sorted().let {
-            it.first()
-        }
+        ).minOf { it }
         return when {
             maximumCups == neededCoffeeCups -> println("Yes, I can make that amount of coffee")
             maximumCups < neededCoffeeCups -> println("No, I can make only $maximumCups cups of coffee")
@@ -50,34 +73,81 @@ class CoffeeMachine(
         )
     }
 
+    private fun useResource(resourceType: String, amount: Int) {
+        when (resourceType) {
+            WATER -> {
+                if (mlOfWater >= amount) {
+                    mlOfWater -= amount
+                } else {
+                    throw NotEnoughResourceException(WATER)
+                }
+            }
+
+            COFFEE_BEANS -> {
+                if (gramsOfCoffeeBeans >= amount) {
+                    gramsOfCoffeeBeans -= amount
+                } else {
+                    throw NotEnoughResourceException(COFFEE_BEANS)
+                }
+            }
+
+            MILK -> {
+                if (mlOfMilk >= amount) {
+                    mlOfMilk -= amount
+                } else {
+                    throw NotEnoughResourceException(MILK)
+                }
+            }
+
+            DISPOSABLE_CUPS -> {
+                if (disposableCups >= amount) {
+                    disposableCups -= amount
+                } else {
+                    throw NotEnoughResourceException(DISPOSABLE_CUPS)
+                }
+            }
+
+            else -> throw RuntimeException("Incorrect resource type passed")
+        }
+    }
+
     fun buy() {
-        println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino:")
-        when (readln().toInt()) {
+        println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, back - to main menu:")
+
+        val userInput = readln()
+
+        if (userInput == "back") {
+            return
+        }
+
+        when (userInput.toInt()) {
             ESPRESSO -> {
-                mlOfWater -= 250
-                gramsOfCoffeeBeans -= 16
+                useResource(resourceType = WATER, ESPRESSO_WATER_NEED)
+                useResource(resourceType = COFFEE_BEANS, ESPRESSO_COFFEE_BEANS_NEED)
+                useResource(resourceType = DISPOSABLE_CUPS, 1)
                 money += 4
-                disposableCups--
             }
 
             LATTE -> {
-                mlOfWater -= 350
-                mlOfMilk -= 75
-                gramsOfCoffeeBeans -= 20
+                useResource(resourceType = WATER, LATTE_WATER_NEED)
+                useResource(resourceType = COFFEE_BEANS, LATTE_COFFEE_BEANS_NEED)
+                useResource(resourceType = MILK, LATTE_MILK_NEED)
+                useResource(resourceType = DISPOSABLE_CUPS, 1)
                 money += 7
-                disposableCups--
             }
 
             CAPPUCCINO -> {
-                mlOfWater -= 200
-                mlOfMilk -= 100
-                gramsOfCoffeeBeans -= 12
+                useResource(resourceType = WATER, CAPPUCCINO_WATER_NEED)
+                useResource(resourceType = COFFEE_BEANS, CAPPUCCINO_COFFEE_BEANS_NEED)
+                useResource(resourceType = MILK, CAPPUCCINO_MILK_NEED)
+                useResource(resourceType = DISPOSABLE_CUPS, 1)
                 money += 6
-                disposableCups--
             }
 
-            else -> throw RuntimeException("Unknown coffee type passed")
+            else -> throw RuntimeException("Unknown resource type passed")
         }
+
+        println("I have enough resources, making you a coffee!")
     }
 
     fun fill() {

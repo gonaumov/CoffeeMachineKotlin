@@ -9,15 +9,24 @@ fun main(args: Array<String>) {
         money = 550
     )
 
-    coffeeMachine.printState()
+    while (true) {
+        println("Write action (buy, fill, take, remaining, exit):")
+        val userChoice = readln()
+        if (userChoice == "exit") {
+            break
+        }
+        when (userChoice) {
+            "buy" -> {
+                try {
+                    coffeeMachine.buy()
+                } catch (ex: NotEnoughResourceException) {
+                    println("Sorry, not enough ${ex.message}!")
+                }
+            }
 
-    println("Write action (buy, fill, take): ")
-
-    when (readln()) {
-        "buy" -> coffeeMachine.buy()
-        "fill" -> coffeeMachine.fill()
-        "take" -> coffeeMachine.takeMoney()
+            "fill" -> coffeeMachine.fill()
+            "take" -> coffeeMachine.takeMoney()
+            "remaining" -> coffeeMachine.printState()
+        }
     }
-
-    coffeeMachine.printState()
 }
