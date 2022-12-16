@@ -1,6 +1,15 @@
 package machine
 
-fun main(args: Array<String>) {
+/**
+ * This file is implemented for Coffee Machine JetBrains academy project:
+ *  https://hyperskill.org/projects/67
+ *  which is part from Kotlin Basic track
+ *  https://hyperskill.org/tracks/18
+ *  @author Georgi Naumov
+ *  gonaumov@gmail.com for contacts and suggestions
+ */
+fun main() {
+
     val coffeeMachine = CoffeeMachine(
         mlOfWater = 400,
         mlOfMilk = 540,
@@ -9,24 +18,8 @@ fun main(args: Array<String>) {
         money = 550
     )
 
-    while (true) {
-        println("Write action (buy, fill, take, remaining, exit):")
-        val userChoice = readln()
-        if (userChoice == "exit") {
-            break
-        }
-        when (userChoice) {
-            "buy" -> {
-                try {
-                    coffeeMachine.buy()
-                } catch (ex: NotEnoughResourceException) {
-                    println("Sorry, not enough ${ex.message}!")
-                }
-            }
+    do {
+        println(coffeeMachine.getStatusMessage())
+    } while (coffeeMachine.processUserInput(readln()))
 
-            "fill" -> coffeeMachine.fill()
-            "take" -> coffeeMachine.takeMoney()
-            "remaining" -> coffeeMachine.printState()
-        }
-    }
 }
