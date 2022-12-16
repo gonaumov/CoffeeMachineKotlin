@@ -8,7 +8,7 @@ package machine
  *  @author Georgi Naumov
  *  gonaumov@gmail.com for contacts and suggestions
  */
-fun main() {
+fun main(args: Array<String>) {
 
     val coffeeMachine = CoffeeMachine(
         mlOfWater = 400,
